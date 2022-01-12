@@ -11,8 +11,9 @@ contract Voice {
     string symbol = "VCE";
 
     // эта функция указывает общее количество токенов в блокчейне
-    function totalSupply() public {
-        //
+    function totalSupply(uint _a, uint _b) public pure returns (uint) {
+        uint c = _a + _b;
+        return c;
     }
 
     // с помощью этой функции можно найти количество токенов, которые имеют установленный адрес
