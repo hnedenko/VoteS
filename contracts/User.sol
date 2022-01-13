@@ -9,6 +9,8 @@ import "./safemath.sol";
 /// @dev 
 contract User {
 
+    event NewUserCreated(string name, address account);
+
     using SafeMath for uint;
 
     struct UserData{
@@ -35,13 +37,15 @@ contract User {
     string memory _name, string memory _citizenship, string memory _profession,
     bool _gender, bool _haveDriversLicense,
     uint16 _weight, uint8 _age, uint8 _height) {
+        // Set address to account value and new user balance to 0
         account = _userAddres;
-
-        data = UserData(_name, _citizenship, _profession, _gender, _haveDriversLicense, _weight, _age, _height);
-
         balance = 0;
 
-        //DO EVENT!
+        // Set new user data
+        data = UserData(_name, _citizenship, _profession, _gender, _haveDriversLicense, _weight, _age, _height);
+
+        // Emit event, info about new user in VoteS
+        emit NewUserCreated(data.name, account);
     }
 
     /// @notice Added some VCE to user`s balance
