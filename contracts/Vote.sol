@@ -25,7 +25,8 @@ contract Vote {
 
     Core core;
     RespondentsInfo respondentsInfo;
-    address[] interviewedUsers;
+
+    mapping (string => uint) answerToRespondentsQuantity;
 
     /// @notice Created new vote in system
     /// @param _question Text of vote`s question
@@ -35,5 +36,13 @@ contract Vote {
     constructor(string memory _question, string[] memory _answers, uint _maxRespondents, uint _voiceCost) {
         core = Core(_question,_answers);
         respondentsInfo = RespondentsInfo(_maxRespondents, 0, _voiceCost, _maxRespondents.mul(_voiceCost));
+    }
+
+    /// @notice Change vote statistics: increment one of answer option counter
+    /// @param _answer Incremented answer option
+    function addRespondentAnswer(string memory _answer) external {
+        respondentsInfo.nRespondents.add(1);
+        respondentsInfo.balance.sub(respondentsInfo.voiceCost);
+        answerToRespondentsQuantity[_answer].add(1);
     }
 }

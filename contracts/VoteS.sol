@@ -13,13 +13,19 @@ contract VoteS {
 
     using SafeMath for uint;
 
+    // Users and Votes data
     User[] private users;
     Vote[] private votes;
+    
+    // User`s mappings
     mapping (address => bool) private addresToInitialized;
     mapping (address => User) private addressToUser;
+    mapping (address => Vote[]) private addressToPassedVotes;
  
+    // Vote`s mappings
     mapping (uint => Vote) private voteIdToVote;
     mapping (uint => address) private voteIdToOwner;
+    mapping (uint => uint) private voteIdToVoiceCost;
     mapping (address => Vote[]) private ownerAddressToHisVotes;
 
     /// @notice Created new user if system hasn`t it
@@ -59,8 +65,22 @@ contract VoteS {
         uint voteId = uint(keccak256(abi.encode(vote)));
         voteIdToVote[voteId] = vote;
         voteIdToOwner[voteId] = msg.sender;
+        voteIdToVoiceCost[voteId] = _voiceCost;
         ownerAddressToHisVotes[msg.sender].push(vote);
 
         return vote;
+    }
+
+    /// @notice Write all info about user`s voting
+    /// @param _userId Address of respondent user
+    /// @param _voteId Voting vote
+    /// @param _answer Answer option
+    function voting(address _userId, uint _voteId, string memory _answer) external {
+        // Checking what user does not respond to own vote
+        require(keccak256(abi.encode(_userId)) != keccak256(abi.encode(voteIdToOwner[_voteId])));
+
+        // Added answer to vote`s statistics and add VCE to user`s balance
+        voteIdToVote[_voteId].addRespondentAnswer(_answer);
+        addressToUser[_userId].receiveVCE(voteIdToVoiceCost[_voteId]);
     }
 }
