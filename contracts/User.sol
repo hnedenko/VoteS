@@ -11,7 +11,7 @@ contract User {
 
     using SafeMath for uint;
 
-    struct userData{
+    struct UserData{
         string name;
 
         string citizenship;
@@ -25,8 +25,8 @@ contract User {
         uint8 height;
     }
 
-    address public account;
-    userData public data;
+    address account;
+    UserData data;
     uint private balance;
 
     /// @notice Created new user in system with gived address, random data end empty balance
@@ -37,7 +37,7 @@ contract User {
     uint16 _weight, uint8 _age, uint8 _height) {
         account = _userAddres;
 
-        data = userData(_name, _citizenship, _profession, _gender, _haveDriversLicense, _weight, _age, _height);
+        data = UserData(_name, _citizenship, _profession, _gender, _haveDriversLicense, _weight, _age, _height);
 
         balance = 0;
     }
