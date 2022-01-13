@@ -40,6 +40,8 @@ contract User {
         data = UserData(_name, _citizenship, _profession, _gender, _haveDriversLicense, _weight, _age, _height);
 
         balance = 0;
+
+        //DO EVENT!
     }
 
     /// @notice Added some VCE to user`s balance
