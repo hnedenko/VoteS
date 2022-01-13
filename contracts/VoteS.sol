@@ -13,6 +13,11 @@ contract VoteS {
 
     using SafeMath for uint;
 
+    // Config info
+    // TODO: realize as *.config file
+    uint COMMISSION_PERCENTAGE = 2;
+    address SYSTEM_CREATOR_ADDRESS = msg.sender;
+
     // Users and Votes data
     User[] private users;
     Vote[] private votes;
@@ -52,14 +57,20 @@ contract VoteS {
     uint _maxRespondents, uint _voiceCost) external returns (Vote) {
         // Checking the availability of the necessary VCE in the creator's account
         uint userBalace = addressToUser[msg.sender].getBalance();
-        uint necessaryBalance = _maxRespondents.mul(_voiceCost);
-        require(userBalace >= necessaryBalance);
+        uint respondentsRewards = _maxRespondents.mul(_voiceCost);
+        uint commission = respondentsRewards.mul(COMMISSION_PERCENTAGE)/100;
+        uint necessaryBalance = respondentsRewards + commission;
 
-        // Creating vote
-        Vote vote = new Vote(_question, _answers, _maxRespondents, _voiceCost);
+        require(userBalace >= necessaryBalance);
 
         // Subtracting VCE from creator's account
         addressToUser[msg.sender].subtractsVCE(necessaryBalance);
+
+        // Sending commission to VoteS system creator
+        addressToUser[SYSTEM_CREATOR_ADDRESS].receiveVCE(commission);
+
+        // Creating vote
+        Vote vote = new Vote(_question, _answers, _maxRespondents, _voiceCost);
 
         // Seting new vote ID in mappings for further use
         uint voteId = uint(keccak256(abi.encode(vote)));
@@ -80,7 +91,7 @@ contract VoteS {
         require(keccak256(abi.encode(_userId)) != keccak256(abi.encode(voteIdToOwner[_voteId])));
 
         // Added answer to vote`s statistics and add VCE to user`s balance
-        voteIdToVote[_voteId].addRespondentAnswer(_answer);
+        voteIdToVote[_voteId].addRespondentAnswer(_answer, COMMISSION_PERCENTAGE);
         addressToUser[_userId].receiveVCE(voteIdToVoiceCost[_voteId]);
     }
 }
