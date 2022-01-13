@@ -1,13 +1,12 @@
 # VoteS
 Ethereum DApp for secure creation and participation in votes
 
-VoteS contract realize functions:
+## VoteS contract realize functions:
 - createNewUser
 - createNewVoteByUser
 - voting
 - getAllVoteIdsForUser
 
-
-TODO:
+## Prospect:
 - realize ERC20 token
-- thinking about "Where do VCE come from?"
+- realize buying VCE for ETH
