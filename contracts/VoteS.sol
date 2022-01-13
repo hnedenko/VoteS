@@ -47,6 +47,7 @@ contract VoteS {
         // Seting new user address in mappings for further use
         addresToInitialized[msg.sender] = true;
         addressToUser[msg.sender] = user;
+        users.push(user);
 
         return user;
     }
@@ -54,7 +55,14 @@ contract VoteS {
     /// @notice Created new vote by current user address
     /// @return vote - new created vote
     function createNewVoteByUser(string memory _question, string[] memory _answers,
-    uint _maxRespondents, uint _voiceCost) external returns (Vote) {
+    uint _maxRespondents, uint _voiceCost,
+    bool _isCheckedCitizenship, string memory _citizenship,
+    bool _isCheckedProfession, string memory _profession,
+    bool _isCheckedGender, bool _gender,
+    bool _isCheckedDriversLicense, bool _haveDriversLicense,
+    bool _isCheckedWeight, uint16 _minWeight, uint16 _maxWeight,
+    bool _isCheckedAge, uint8 _minAge, uint8 _maxAge,
+    bool _isCheckedHeight, uint8 _minHeight, uint8 _maxHeight) external returns (Vote) {
         // Checking the availability of the necessary VCE in the creator's account
         uint userBalace = addressToUser[msg.sender].getBalance();
         uint respondentsRewards = _maxRespondents.mul(_voiceCost);
@@ -70,7 +78,14 @@ contract VoteS {
         addressToUser[SYSTEM_CREATOR_ADDRESS].receiveVCE(commission);
 
         // Creating vote
-        Vote vote = new Vote(_question, _answers, _maxRespondents, _voiceCost);
+        Vote vote = new Vote(_question, _answers, _maxRespondents, _voiceCost,
+            _isCheckedCitizenship, _citizenship,
+            _isCheckedProfession, _profession,
+            _isCheckedGender, _gender,
+            _isCheckedDriversLicense, _haveDriversLicense,
+            _isCheckedWeight, _minWeight, _maxWeight,
+            _isCheckedAge, _minAge, _maxAge,
+            _isCheckedHeight, _minHeight, _maxHeight);
 
         // Seting new vote ID in mappings for further use
         uint voteId = uint(keccak256(abi.encode(vote)));
@@ -78,6 +93,7 @@ contract VoteS {
         voteIdToOwner[voteId] = msg.sender;
         voteIdToVoiceCost[voteId] = _voiceCost;
         ownerAddressToHisVotes[msg.sender].push(vote);
+        votes.push(vote);
 
         return vote;
     }
@@ -89,6 +105,7 @@ contract VoteS {
     function voting(address _userId, uint _voteId, string memory _answer) external {
         // Checking what user does not respond to own vote
         require(keccak256(abi.encode(_userId)) != keccak256(abi.encode(voteIdToOwner[_voteId])));
+        require(_checkUsersDataForVoteRequirements(_userId, _voteId));
 
         // Added answer to vote`s statistics and add VCE to user`s balance
         voteIdToVote[_voteId].addRespondentAnswer(_answer);
@@ -99,26 +116,26 @@ contract VoteS {
     /// @param _userId Address of respondent user
     /// @param _voteId Voting vote
     /// @return conclusion - true when user can voting this vote, false in another case
-    function checkUsersDataForVoteRequirements(address _userId, uint _voteId) external view returns (bool) {
+    function _checkUsersDataForVoteRequirements(address _userId, uint _voteId) private view returns (bool) {
         bool conclusion = true;
 
         // Set info about vote`s requirements
         (bool reqIsCheckedCitizenship, string memory reqCitizenship,
-        bool reqIsCheckedProfession, string memory reqProfession,
-        bool reqIsCheckedGender, bool reqGender,
-        bool reqIsCheckedDriversLicense, bool reqHaveDriversLicense,
-        bool reqIsCheckedWeight, uint16 reqMinWeight, uint16 reqMaxWeight,
-        bool reqIsCheckedAge, uint8 reqMinAge, uint8 reqMaxAge,
-        bool reqIsCheckedHeight, uint8 reqMinHeight, uint8 reqMaxHeight) = voteIdToVote[_voteId].getFilters();
+            bool reqIsCheckedProfession, string memory reqProfession,
+            bool reqIsCheckedGender, bool reqGender,
+            bool reqIsCheckedDriversLicense, bool reqHaveDriversLicense,
+            bool reqIsCheckedWeight, uint16 reqMinWeight, uint16 reqMaxWeight,
+            bool reqIsCheckedAge, uint8 reqMinAge, uint8 reqMaxAge,
+            bool reqIsCheckedHeight, uint8 reqMinHeight, uint8 reqMaxHeight) = voteIdToVote[_voteId].getFilters();
 
         // Set user`s info
         (, string memory userCitizenship,
-        string memory userProfession,
-        bool userGender,
-        bool userHaveDriversLicense,
-        uint16 userWeight,
-        uint8 userAge,
-        uint8 userHeight) = addressToUser[_userId].getData();
+            string memory userProfession,
+            bool userGender,
+            bool userHaveDriversLicense,
+            uint16 userWeight,
+            uint8 userAge,
+            uint8 userHeight) = addressToUser[_userId].getData();
 
         // Check all requirements
         if (reqIsCheckedCitizenship) {

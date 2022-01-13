@@ -64,10 +64,24 @@ contract Vote {
     /// @param _answers Texts of all vote`s answer options
     /// @param _maxRespondents Number of respondents to vote
     /// @param _voiceCost Reward for one respondent for voting
-    constructor(string memory _question, string[] memory _answers, uint _maxRespondents, uint _voiceCost) {
+    constructor(string memory _question, string[] memory _answers, uint _maxRespondents, uint _voiceCost,
+    bool _isCheckedCitizenship, string memory _citizenship,
+    bool _isCheckedProfession, string memory _profession,
+    bool _isCheckedGender, bool _gender,
+    bool _isCheckedDriversLicense, bool _haveDriversLicense,
+    bool _isCheckedWeight, uint16 _minWeight, uint16 _maxWeight,
+    bool _isCheckedAge, uint8 _minAge, uint8 _maxAge,
+    bool _isCheckedHeight, uint8 _minHeight, uint8 _maxHeight) {
         // Initialize vote data
         core = Core(_question,_answers);
         respondentsInfo = RespondentsInfo(_maxRespondents, 0, _voiceCost, _maxRespondents.mul(_voiceCost));
+        filters = Filters(_isCheckedCitizenship, _citizenship,
+            _isCheckedProfession, _profession,
+            _isCheckedGender, _gender,
+            _isCheckedDriversLicense, _haveDriversLicense, 
+            _isCheckedWeight, _minWeight, _maxWeight, 
+            _isCheckedAge, _minAge, _maxAge,
+            _isCheckedHeight, _minHeight, _maxHeight);
 
         // Emit event about new vote in VoteS
         emit NewVoteCreated(_question, _voiceCost);
@@ -100,11 +114,11 @@ contract Vote {
     bool, uint8, uint8,
     bool, uint8, uint8) {
         return (filters.isCheckedCitizenship, filters.citizenship,
-        filters.isCheckedProfession, filters.profession,
-        filters.isCheckedGender, filters.gender,
-        filters.isCheckedDriversLicense, filters.haveDriversLicense,
-        filters.isCheckedWeight, filters.minWeight, filters.maxWeight,
-        filters.isCheckedAge, filters.minAge, filters.maxAge,
-        filters.isCheckedHeight, filters.minHeight, filters.maxHeight);        
+            filters.isCheckedProfession, filters.profession,
+            filters.isCheckedGender, filters.gender,
+            filters.isCheckedDriversLicense, filters.haveDriversLicense,
+            filters.isCheckedWeight, filters.minWeight, filters.maxWeight,
+            filters.isCheckedAge, filters.minAge, filters.maxAge,
+            filters.isCheckedHeight, filters.minHeight, filters.maxHeight);        
     }
 }
