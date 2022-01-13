@@ -11,6 +11,8 @@ import "./safemath.sol";
 /// @dev 
 contract VoteS {
 
+    event FoundMatchPoll(address usedId, uint voteId);
+
     using SafeMath for uint;
 
     // Config info
@@ -21,6 +23,7 @@ contract VoteS {
     // Users and Votes data
     User[] private users;
     Vote[] private votes;
+    uint[] private voteIds;
     
     // User`s mappings
     mapping (address => bool) private addresToInitialized;
@@ -94,6 +97,7 @@ contract VoteS {
         voteIdToVoiceCost[voteId] = _voiceCost;
         ownerAddressToHisVotes[msg.sender].push(vote);
         votes.push(vote);
+        voteIds.push(voteId);
 
         return vote;
     }
@@ -110,6 +114,18 @@ contract VoteS {
         // Added answer to vote`s statistics and add VCE to user`s balance
         voteIdToVote[_voteId].addRespondentAnswer(_answer);
         addressToUser[_userId].receiveVCE(voteIdToVoiceCost[_voteId]);
+    }
+
+    /// @notice Search and return all votes which filters match with user`s info
+    /// @param _userId Address of user
+    function getAllVoteIdsForUser(address _userId) external {
+        uint nVotes = voteIds.length;
+        for (uint i = 0; i < nVotes; i.add(1)) {
+            if (_checkUsersDataForVoteRequirements(_userId, voteIds[i])) {
+                emit FoundMatchPoll(_userId, voteIds[i]);
+            }
+        }
+
     }
 
     /// @notice Checks if the user matches the voting requirements
