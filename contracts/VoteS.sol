@@ -19,7 +19,8 @@ contract VoteS {
     mapping (address => User) private addressToUser;
  
     mapping (uint => Vote) private voteIdToVote;
-    mapping (address => Vote[]) private userAddressToHisVotes;
+    mapping (uint => address) private voteIdToOwner;
+    mapping (address => Vote[]) private ownerAddressToHisVotes;
 
     /// @notice Created new user if system hasn`t it
     /// @return user - new created user
@@ -48,7 +49,8 @@ contract VoteS {
         uint voteId = uint(keccak256(abi.encode(vote)));
 
         voteIdToVote[voteId] = vote;
-        userAddressToHisVotes[msg.sender].push(vote);
+        voteIdToOwner[voteId] = msg.sender;
+        ownerAddressToHisVotes[msg.sender].push(vote);
 
         return vote;
     }

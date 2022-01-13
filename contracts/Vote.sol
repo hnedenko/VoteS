@@ -25,7 +25,6 @@ contract Vote {
 
     Core core;
     RespondentsInfo respondentsInfo;
-    address owner;
     address[] interviewedUsers;
 
     /// @notice Created new vote in system
@@ -33,11 +32,8 @@ contract Vote {
     /// @param _answers Texts of all vote`s answer options
     /// @param _maxRespondents Number of respondents to vote
     /// @param _voiceCost Reward for one respondent for voting
-    /// @param _owner Vote owner address
-    constructor(string memory _question, string[] memory _answers, uint _maxRespondents, uint _voiceCost, address _owner) {
+    constructor(string memory _question, string[] memory _answers, uint _maxRespondents, uint _voiceCost) {
         core = Core(_question,_answers);
         respondentsInfo = RespondentsInfo(_maxRespondents, 0, _voiceCost, _maxRespondents.mul(_voiceCost));
-
-        owner = _owner;
     }
 }
