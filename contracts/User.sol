@@ -43,15 +43,32 @@ contract User is Helper {
         balance = 0;
     }
 
-    ///
+    /// @notice Added some VCE to user`s balance
+    /// @param _nVCE Value in VCE to added to user`s balance
     function receiveVCE(uint _nVCE) external {
         require(_nVCE > 0);
-        this.balance += _nVCE;
+        balance.add(_nVCE);
+    }
+
+    /// @notice Added some VCE to user`s balance
+    /// @param _nVCE Value in VCE to added to user`s balance
+    function subtractsVCE(uint _nVCE) external {
+        require((_nVCE > 0) && (balance >= _nVCE));
+        balance.sub(_nVCE);
+    }
+
+    /// @notice Returns current user`s balance if requests current user
+    /// @return balance - current user`s balance
+    function getBalance() external view returns (uint) {
+        require(msg.sender == account);
+        return balance;
     }
     
     /// @notice Function sent user`s voice to same possible answer
-    /// @param answer Number of user`s answer to votes question
-    function toVote(uint8 answer) external {
-
+    /// @param voteId Id of vote on which user answered
+    /// @param answer Number of user`s answer to Vote
+    /// @return account User`s account for to take into account the one-time voting
+    function toVote(uint voteId, uint8 answer) external returns (address) {
+        return account;
     }
 }
