@@ -63,7 +63,7 @@ contract User {
     }
 
     /// @notice Returns current user`s balance if requests current user
-    /// @return balance - current user`s balance
+    /// @return current user`s balance
     function getBalance() external view returns (uint) {
         require(msg.sender == account);
         return balance;

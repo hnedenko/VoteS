@@ -37,7 +37,7 @@ contract VoteS {
     mapping (address => Vote[]) private ownerAddressToHisVotes;
 
     /// @notice Created new user if system hasn`t it
-    /// @return user - new created user
+    /// @return new created user
     function createNewUser(string memory _name, string memory _citizenship, string memory _profession,
     bool _gender, bool _haveDriversLicense,
     uint16 _weight, uint8 _age, uint8 _height) external returns (User) {
@@ -56,7 +56,7 @@ contract VoteS {
     }
 
     /// @notice Created new vote by current user address
-    /// @return vote - new created vote
+    /// @return new created vote
     function createNewVoteByUser(string memory _question, string[] memory _answers,
     uint _maxRespondents, uint _voiceCost,
     bool _isCheckedCitizenship, string memory _citizenship,
@@ -125,13 +125,12 @@ contract VoteS {
                 emit FoundMatchPoll(_userId, voteIds[i]);
             }
         }
-
     }
 
     /// @notice Checks if the user matches the voting requirements
     /// @param _userId Address of respondent user
     /// @param _voteId Voting vote
-    /// @return conclusion - true when user can voting this vote, false in another case
+    /// @return true when user can voting this vote, false in another case
     function _checkUsersDataForVoteRequirements(address _userId, uint _voteId) private view returns (bool) {
         bool conclusion = true;
 
