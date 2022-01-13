@@ -2,12 +2,15 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 import "./Helper.sol";
+import "./safemath.sol";
 
 /// @title User`s data and actions
 /// @author @oleh
 /// @notice User's personal data and actions to interact with Votes
 /// @dev 
 contract User is Helper {
+
+    using SafeMath for uint;
 
     struct userData{
         string name;
@@ -29,20 +32,21 @@ contract User is Helper {
 
     /// @notice Created new user in system with gived address, random data end empty balance
     /// @param _userAddres The user`s public address
-    constructor(address _userAddres) {
+    constructor(address _userAddres,
+    string memory _name, string memory _citizenship, string memory _profession,
+    bool _gender, bool _haveDriversLicense,
+    uint16 _weight, uint8 _age, uint8 _height) {
         account = _userAddres;
 
-        string memory rndName;
-        string memory rndCitizenship;
-        string memory rndProfession;
-        bool rndGender;
-        bool rndHaveDriversLicense;
-        uint16 rndWeight = getRandomUint(10);
-        uint8 rndAge;
-        uint8 rndHeight;
-        data = userData();
+        data = userData(_name, _citizenship, _profession, _gender, _haveDriversLicense, _weight, _age, _height);
 
         balance = 0;
+    }
+
+    ///
+    function receiveVCE(uint _nVCE) external {
+        require(_nVCE > 0);
+        this.balance += _nVCE;
     }
     
     /// @notice Function sent user`s voice to same possible answer
