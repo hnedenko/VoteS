@@ -91,7 +91,72 @@ contract VoteS {
         require(keccak256(abi.encode(_userId)) != keccak256(abi.encode(voteIdToOwner[_voteId])));
 
         // Added answer to vote`s statistics and add VCE to user`s balance
-        voteIdToVote[_voteId].addRespondentAnswer(_answer, COMMISSION_PERCENTAGE);
+        voteIdToVote[_voteId].addRespondentAnswer(_answer);
         addressToUser[_userId].receiveVCE(voteIdToVoiceCost[_voteId]);
+    }
+
+    /// @notice Checks if the user matches the voting requirements
+    /// @param _userId Address of respondent user
+    /// @param _voteId Voting vote
+    /// @return conclusion - true when user can voting this vote, false in another case
+    function checkUsersDataForVoteRequirements(address _userId, uint _voteId) external view returns (bool) {
+        bool conclusion = true;
+
+        // Set info about vote`s requirements
+        (bool reqIsCheckedCitizenship, string memory reqCitizenship,
+        bool reqIsCheckedProfession, string memory reqProfession,
+        bool reqIsCheckedGender, bool reqGender,
+        bool reqIsCheckedDriversLicense, bool reqHaveDriversLicense,
+        bool reqIsCheckedWeight, uint16 reqMinWeight, uint16 reqMaxWeight,
+        bool reqIsCheckedAge, uint8 reqMinAge, uint8 reqMaxAge,
+        bool reqIsCheckedHeight, uint8 reqMinHeight, uint8 reqMaxHeight) = voteIdToVote[_voteId].getFilters();
+
+        // Set user`s info
+        (, string memory userCitizenship,
+        string memory userProfession,
+        bool userGender,
+        bool userHaveDriversLicense,
+        uint16 userWeight,
+        uint8 userAge,
+        uint8 userHeight) = addressToUser[_userId].getData();
+
+        // Check all requirements
+        if (reqIsCheckedCitizenship) {
+            if (keccak256(abi.encode(reqCitizenship)) != keccak256(abi.encode(userCitizenship))) {
+                conclusion = false;
+            }
+        }
+        if (reqIsCheckedProfession) {
+            if (keccak256(abi.encode(reqProfession)) != keccak256(abi.encode(userProfession))) {
+                conclusion = false;
+            }
+        }
+        if (reqIsCheckedGender) {
+            if (reqGender != userGender) {
+                conclusion = false;
+            }
+        }
+        if (reqIsCheckedDriversLicense) {
+            if (reqHaveDriversLicense != userHaveDriversLicense) {
+                conclusion = false;
+            }
+        }
+        if (reqIsCheckedWeight) {
+            if (reqMinWeight > userWeight || userWeight > reqMaxWeight) {
+                conclusion = false;
+            }
+        }
+        if (reqIsCheckedAge) {
+            if (reqMinAge > userAge || userAge > reqMaxAge) {
+                conclusion = false;
+            }
+        }
+        if (reqIsCheckedHeight) {
+            if (reqMinHeight > userHeight || userHeight > reqMaxHeight) {
+                conclusion = false;
+            }
+        }
+
+        return conclusion;
     }
 }

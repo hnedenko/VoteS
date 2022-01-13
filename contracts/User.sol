@@ -68,4 +68,10 @@ contract User {
         require(msg.sender == account);
         return balance;
     }
+
+    /// @notice Returns user`s data
+    /// @return User`s data
+    function getData() external view returns (string memory, string memory, string memory, bool, bool, uint16, uint8, uint8) {
+        return (data.name, data.citizenship, data.profession, data.gender, data.haveDriversLicense, data.weight, data.age, data.height);        
+    }
 }

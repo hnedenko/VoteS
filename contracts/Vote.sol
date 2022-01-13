@@ -27,8 +27,35 @@ contract Vote {
         uint balance;
     }
 
+    struct Filters{
+        bool isCheckedCitizenship;
+        string citizenship;
+
+        bool isCheckedProfession;
+        string profession;
+
+        bool isCheckedGender;
+        bool gender;
+
+        bool isCheckedDriversLicense;
+        bool haveDriversLicense;
+
+        bool isCheckedWeight;
+        uint16 minWeight;
+        uint16 maxWeight;
+
+        bool isCheckedAge;
+        uint8 minAge;
+        uint8 maxAge;
+
+        bool isCheckedHeight;
+        uint8 minHeight;
+        uint8 maxHeight;
+    }
+
     Core core;
     RespondentsInfo respondentsInfo;
+    Filters filters;
 
     mapping (string => uint) answerToRespondentsQuantity;
 
@@ -61,5 +88,23 @@ contract Vote {
             // Emit event about vote filling
             emit VoteFilled(core.question);
         }
+    }
+
+    /// @notice Returns vote requirements
+    /// @return Vote requirements
+    function getFilters() external view returns (bool, string memory,
+    bool, string memory,
+    bool, bool,
+    bool, bool,
+    bool, uint16, uint16,
+    bool, uint8, uint8,
+    bool, uint8, uint8) {
+        return (filters.isCheckedCitizenship, filters.citizenship,
+        filters.isCheckedProfession, filters.profession,
+        filters.isCheckedGender, filters.gender,
+        filters.isCheckedDriversLicense, filters.haveDriversLicense,
+        filters.isCheckedWeight, filters.minWeight, filters.maxWeight,
+        filters.isCheckedAge, filters.minAge, filters.maxAge,
+        filters.isCheckedHeight, filters.minHeight, filters.maxHeight);        
     }
 }
