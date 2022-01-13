@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 
-import "./Helper.sol";
 import "./safemath.sol";
 
 /// @title User`s data and actions
 /// @author @oleh
 /// @notice User's personal data and actions to interact with Votes
 /// @dev 
-contract User is Helper {
+contract User {
 
     using SafeMath for uint;
 
@@ -62,13 +61,5 @@ contract User is Helper {
     function getBalance() external view returns (uint) {
         require(msg.sender == account);
         return balance;
-    }
-    
-    /// @notice Function sent user`s voice to same possible answer
-    /// @param voteId Id of vote on which user answered
-    /// @param answer Number of user`s answer to Vote
-    /// @return account User`s account for to take into account the one-time voting
-    function toVote(uint voteId, uint8 answer) external returns (address) {
-        return account;
     }
 }
