@@ -9,7 +9,7 @@ import "./safemath.sol";
 /// @dev 
 contract User {
 
-    event NewUserCreated(string name, address account);
+    event NewUserCreated(string name, address indexed account);
 
     using SafeMath for uint;
 

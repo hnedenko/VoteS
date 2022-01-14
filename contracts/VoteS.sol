@@ -11,7 +11,7 @@ import "./safemath.sol";
 /// @dev 
 contract VoteS {
 
-    event FoundMatchPoll(address usedId, uint voteId);
+    event FoundMatchPoll(address indexed usedId, uint voteId);
 
     using SafeMath for uint;
 
