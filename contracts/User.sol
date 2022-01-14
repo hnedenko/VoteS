@@ -34,16 +34,13 @@ contract User is Ownable {
 
     /// @notice Created new user in system with gived address, random data end empty balance
     /// @param _userAddres The user`s public address
-    constructor(address _userAddres,
-    string memory _name, string memory _citizenship, string memory _profession,
-    bool _gender, bool _haveDriversLicense,
-    uint16 _weight, uint8 _age, uint8 _height) {
+    constructor(address _userAddres, UserData memory _userData) {
         // Set address to account value and new user balance to 0
         account = _userAddres;
         balance = 0;
 
         // Set new user data
-        data = UserData(_name, _citizenship, _profession, _gender, _haveDriversLicense, _weight, _age, _height);
+        data = _userData;
 
         // Emit event, info about new user in VoteS
         emit NewUserCreated(data.name, account);
@@ -72,8 +69,8 @@ contract User is Ownable {
 
     /// @notice Returns user`s data
     /// @return User`s data
-    function getData() external view returns (string memory, string memory, string memory, bool, bool, uint16, uint8, uint8) {
-        return (data.name, data.citizenship, data.profession, data.gender, data.haveDriversLicense, data.weight, data.age, data.height);        
+    function getData() external view returns (UserData memory) {
+        return data;        
     }
 
     /// @notice Test function deleted this contract

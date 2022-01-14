@@ -61,31 +61,18 @@ contract Vote is Ownable {
     mapping (string => uint) answerToRespondentsQuantity;
 
     /// @notice Created new vote in system
-    /// @param _question Text of vote`s question
-    /// @param _answers Texts of all vote`s answer options
+    /// @param _core Text of vote`s question and all vote`s answer options
     /// @param _maxRespondents Number of respondents to vote
     /// @param _voiceCost Reward for one respondent for voting
-    constructor(string memory _question, string[] memory _answers, uint _maxRespondents, uint _voiceCost,
-    bool _isCheckedCitizenship, string memory _citizenship,
-    bool _isCheckedProfession, string memory _profession,
-    bool _isCheckedGender, bool _gender,
-    bool _isCheckedDriversLicense, bool _haveDriversLicense,
-    bool _isCheckedWeight, uint16 _minWeight, uint16 _maxWeight,
-    bool _isCheckedAge, uint8 _minAge, uint8 _maxAge,
-    bool _isCheckedHeight, uint8 _minHeight, uint8 _maxHeight) {
+    /// @param _filters Filters which new vote will using for users
+    constructor(Core memory _core, uint _maxRespondents, uint _voiceCost, Filters memory _filters) {
         // Initialize vote data
-        core = Core(_question,_answers);
+        core = _core;
         respondentsInfo = RespondentsInfo(_maxRespondents, 0, _voiceCost, _maxRespondents.mul(_voiceCost));
-        filters = Filters(_isCheckedCitizenship, _citizenship,
-            _isCheckedProfession, _profession,
-            _isCheckedGender, _gender,
-            _isCheckedDriversLicense, _haveDriversLicense, 
-            _isCheckedWeight, _minWeight, _maxWeight, 
-            _isCheckedAge, _minAge, _maxAge,
-            _isCheckedHeight, _minHeight, _maxHeight);
+        filters = _filters;
 
         // Emit event about new vote in VoteS
-        emit NewVoteCreated(_question, _voiceCost);
+        emit NewVoteCreated(core.question, respondentsInfo.voiceCost);
     }
 
     /// @notice Change vote statistics: increment one of answer option counter
@@ -107,20 +94,8 @@ contract Vote is Ownable {
 
     /// @notice Returns vote requirements
     /// @return Vote requirements
-    function getFilters() external view returns (bool, string memory,
-    bool, string memory,
-    bool, bool,
-    bool, bool,
-    bool, uint16, uint16,
-    bool, uint8, uint8,
-    bool, uint8, uint8) {
-        return (filters.isCheckedCitizenship, filters.citizenship,
-            filters.isCheckedProfession, filters.profession,
-            filters.isCheckedGender, filters.gender,
-            filters.isCheckedDriversLicense, filters.haveDriversLicense,
-            filters.isCheckedWeight, filters.minWeight, filters.maxWeight,
-            filters.isCheckedAge, filters.minAge, filters.maxAge,
-            filters.isCheckedHeight, filters.minHeight, filters.maxHeight);        
+    function getFilters() external view returns (Filters memory) {
+        return filters;        
     }
 
     /// @notice Test function deleted this contract

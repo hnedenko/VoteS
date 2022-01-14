@@ -39,14 +39,11 @@ contract VoteS is Ownable {
 
     /// @notice Created new user if system hasn`t it
     /// @return new created user
-    function createNewUser(string memory _name, string memory _citizenship, string memory _profession,
-    bool _gender, bool _haveDriversLicense,
-    uint16 _weight, uint8 _age, uint8 _height) external returns (User) {
+    function createNewUser(User.UserData memory _userData) external returns (User) {
         // Checking if a user is not register in system
         require(addresToInitialized[msg.sender] == false);
 
-        // Creating user
-        User user = new User(msg.sender, _name, _citizenship, _profession, _gender, _haveDriversLicense, _weight, _age, _height);
+        User user = new User(msg.sender, _userData);
 
         // Seting new user address in mappings for further use
         addresToInitialized[msg.sender] = true;
@@ -57,16 +54,14 @@ contract VoteS is Ownable {
     }
 
     /// @notice Created new vote by current user address
+    /// @param _core Text of vote`s question and all vote`s answer options
+    /// @param _maxRespondents Number of respondents to vote
+    /// @param _voiceCost Reward for one respondent for voting
+    /// @param _filters Filters which new vote will using for users
     /// @return new created vote
-    function createNewVoteByUser(string memory _question, string[] memory _answers,
+    function createNewVoteByUser(Vote.Core memory _core,
     uint _maxRespondents, uint _voiceCost,
-    bool _isCheckedCitizenship, string memory _citizenship,
-    bool _isCheckedProfession, string memory _profession,
-    bool _isCheckedGender, bool _gender,
-    bool _isCheckedDriversLicense, bool _haveDriversLicense,
-    bool _isCheckedWeight, uint16 _minWeight, uint16 _maxWeight,
-    bool _isCheckedAge, uint8 _minAge, uint8 _maxAge,
-    bool _isCheckedHeight, uint8 _minHeight, uint8 _maxHeight) external returns (Vote) {
+    Vote.Filters memory _filters) external returns (Vote) {
         // Checking the availability of the necessary VCE in the creator's account
         uint userBalace = addressToUser[msg.sender].getBalance();
         uint respondentsRewards = _maxRespondents.mul(_voiceCost);
@@ -82,14 +77,7 @@ contract VoteS is Ownable {
         addressToUser[SYSTEM_CREATOR_ADDRESS].receiveVCE(commission);
 
         // Creating vote
-        Vote vote = new Vote(_question, _answers, _maxRespondents, _voiceCost,
-            _isCheckedCitizenship, _citizenship,
-            _isCheckedProfession, _profession,
-            _isCheckedGender, _gender,
-            _isCheckedDriversLicense, _haveDriversLicense,
-            _isCheckedWeight, _minWeight, _maxWeight,
-            _isCheckedAge, _minAge, _maxAge,
-            _isCheckedHeight, _minHeight, _maxHeight);
+        Vote vote = new Vote(_core, _maxRespondents, _voiceCost, _filters);
 
         // Seting new vote ID in mappings for further use
         uint voteId = uint(keccak256(abi.encode(vote)));
@@ -136,56 +124,44 @@ contract VoteS is Ownable {
         bool conclusion = true;
 
         // Set info about vote`s requirements
-        (bool reqIsCheckedCitizenship, string memory reqCitizenship,
-            bool reqIsCheckedProfession, string memory reqProfession,
-            bool reqIsCheckedGender, bool reqGender,
-            bool reqIsCheckedDriversLicense, bool reqHaveDriversLicense,
-            bool reqIsCheckedWeight, uint16 reqMinWeight, uint16 reqMaxWeight,
-            bool reqIsCheckedAge, uint8 reqMinAge, uint8 reqMaxAge,
-            bool reqIsCheckedHeight, uint8 reqMinHeight, uint8 reqMaxHeight) = voteIdToVote[_voteId].getFilters();
+        Vote.Filters memory filters = voteIdToVote[_voteId].getFilters();
 
         // Set user`s info
-        (, string memory userCitizenship,
-            string memory userProfession,
-            bool userGender,
-            bool userHaveDriversLicense,
-            uint16 userWeight,
-            uint8 userAge,
-            uint8 userHeight) = addressToUser[_userId].getData();
+        User.UserData memory userData = addressToUser[_userId].getData();
 
         // Check all requirements
-        if (reqIsCheckedCitizenship) {
-            if (keccak256(abi.encode(reqCitizenship)) != keccak256(abi.encode(userCitizenship))) {
+        if (filters.isCheckedCitizenship) {
+            if (keccak256(abi.encode(filters.citizenship)) != keccak256(abi.encode(userData.citizenship))) {
                 conclusion = false;
             }
         }
-        if (reqIsCheckedProfession) {
-            if (keccak256(abi.encode(reqProfession)) != keccak256(abi.encode(userProfession))) {
+        if (filters.isCheckedProfession) {
+            if (keccak256(abi.encode(filters.profession)) != keccak256(abi.encode(userData.profession))) {
                 conclusion = false;
             }
         }
-        if (reqIsCheckedGender) {
-            if (reqGender != userGender) {
+        if (filters.isCheckedGender) {
+            if (filters.gender != userData.gender) {
                 conclusion = false;
             }
         }
-        if (reqIsCheckedDriversLicense) {
-            if (reqHaveDriversLicense != userHaveDriversLicense) {
+        if (filters.isCheckedDriversLicense) {
+            if (filters.haveDriversLicense != userData.haveDriversLicense) {
                 conclusion = false;
             }
         }
-        if (reqIsCheckedWeight) {
-            if (reqMinWeight > userWeight || userWeight > reqMaxWeight) {
+        if (filters.isCheckedWeight) {
+            if (filters.minWeight > userData.weight || userData.weight > filters.maxWeight) {
                 conclusion = false;
             }
         }
-        if (reqIsCheckedAge) {
-            if (reqMinAge > userAge || userAge > reqMaxAge) {
+        if (filters.isCheckedAge) {
+            if (filters.minAge > userData.age || userData.age > filters.maxAge) {
                 conclusion = false;
             }
         }
-        if (reqIsCheckedHeight) {
-            if (reqMinHeight > userHeight || userHeight > reqMaxHeight) {
+        if (filters.isCheckedHeight) {
+            if (filters.minHeight > userData.height || userData.height > filters.maxHeight) {
                 conclusion = false;
             }
         }
