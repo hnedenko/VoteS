@@ -4,12 +4,13 @@ pragma solidity >=0.4.22 <0.9.0;
 import "./User.sol";
 import "./Vote.sol";
 import "./safemath.sol";
+import "./ownable.sol";
 
 /// @title Main contract in DApp, contains all the logic of user interaction, votes, VCE
 /// @author @oleh
 /// @notice 
 /// @dev 
-contract VoteS {
+contract VoteS is Ownable {
 
     event FoundMatchPoll(address indexed usedId, uint voteId);
 
@@ -190,5 +191,11 @@ contract VoteS {
         }
 
         return conclusion;
+    }
+
+    /// @notice Test function deleted this contract
+    function kill() public onlyOwner {
+        address payable payableOwnerAddress = payable(address(owner));
+        selfdestruct(payableOwnerAddress);
     }
 }

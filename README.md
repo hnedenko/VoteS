@@ -10,6 +10,7 @@ Ethereum DApp for secure creation and participation in votes
 ## Prospect:
 - realize ERC20 token
 - realize buying VCE for ETH
-- add function kill() public onlyOwner {
+- add
+function kill() public onlyOwner {
     selfdestruct(owner());
     } to each contract

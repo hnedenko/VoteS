@@ -2,12 +2,13 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 import "./safemath.sol";
+import "./ownable.sol";
 
 /// @title User`s data and actions
 /// @author @oleh
 /// @notice User's personal data and actions to interact with Votes
 /// @dev 
-contract User {
+contract User is Ownable {
 
     event NewUserCreated(string name, address indexed account);
 
@@ -73,5 +74,11 @@ contract User {
     /// @return User`s data
     function getData() external view returns (string memory, string memory, string memory, bool, bool, uint16, uint8, uint8) {
         return (data.name, data.citizenship, data.profession, data.gender, data.haveDriversLicense, data.weight, data.age, data.height);        
+    }
+
+    /// @notice Test function deleted this contract
+    function kill() public onlyOwner {
+        address payable payableOwnerAddress = payable(address(owner));
+        selfdestruct(payableOwnerAddress);
     }
 }

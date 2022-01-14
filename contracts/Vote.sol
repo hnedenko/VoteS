@@ -2,12 +2,13 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 import "./safemath.sol";
+import "./ownable.sol";
 
 /// @title Vote`s data and actions
 /// @author @oleh
 /// @notice 
 /// @dev 
-contract Vote {
+contract Vote is Ownable {
 
     event NewVoteCreated(string question, uint cost);
     event AnswerTaken(string question, string answers);
@@ -120,5 +121,11 @@ contract Vote {
             filters.isCheckedWeight, filters.minWeight, filters.maxWeight,
             filters.isCheckedAge, filters.minAge, filters.maxAge,
             filters.isCheckedHeight, filters.minHeight, filters.maxHeight);        
+    }
+
+    /// @notice Test function deleted this contract
+    function kill() public onlyOwner {
+        address payable payableOwnerAddress = payable(address(owner));
+        selfdestruct(payableOwnerAddress);
     }
 }
