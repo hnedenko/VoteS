@@ -1,5 +1,5 @@
-const Voice = artifacts.require("Voice");
+const Migrations = artifacts.require("Migrations");
 
 module.exports = function (deployer) {
-  deployer.deploy(Voice);
+  deployer.deploy(Migrations);
 };
