@@ -32,12 +32,12 @@ contract User is Ownable {
     UserData data;
     uint private balance;
 
-    /// @notice Created new user in system with gived address, random data end empty balance
+    /// @notice Created new user in system with gived address, data end with 2000 EVC in balance
     /// @param _userAddres The user`s public address
     constructor(address _userAddres, UserData memory _userData) {
         // Set address to account value and new user balance to 0
         account = _userAddres;
-        balance = 0;
+        balance = 2000;
 
         // Set new user data
         data = _userData;

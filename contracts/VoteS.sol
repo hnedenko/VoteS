@@ -13,6 +13,7 @@ import "./ownable.sol";
 contract VoteS is Ownable {
 
     event FoundMatchPoll(address indexed usedId, uint voteId);
+    event TestEvent(uint userBalace, uint necessaryBalance);
 
     using SafeMath for uint;
 
@@ -63,10 +64,23 @@ contract VoteS is Ownable {
     uint _maxRespondents, uint _voiceCost,
     Vote.Filters memory _filters) external returns (Vote) {
         // Checking the availability of the necessary VCE in the creator's account
+        emit TestEvent(1, 1);
+
         uint userBalace = addressToUser[msg.sender].getBalance();
+
+        emit TestEvent(2, 2);
+
         uint respondentsRewards = _maxRespondents.mul(_voiceCost);
+
+        emit TestEvent(3, 3);
+
         uint commission = respondentsRewards.mul(COMMISSION_PERCENTAGE)/100;
+
+        emit TestEvent(4, 4);
+
         uint necessaryBalance = respondentsRewards + commission;
+
+        emit TestEvent(6, 6);
 
         require(userBalace >= necessaryBalance);
 
