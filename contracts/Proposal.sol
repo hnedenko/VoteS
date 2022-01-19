@@ -8,12 +8,12 @@ contract Proposal {
   event NewProposalCreated(address indexed user, uint proposalNumber, string proposal);
   event UserVoted(address indexed user, uint proposalNumber, bool answer);
   
-  uint private proposalsCounter;
-  string[] private proposals;
+  uint public proposalsCounter;
+  string[] public proposals;
 
-  mapping (address=>uint) private addressToProposalNumber;
-  mapping (uint=>uint) private numberProposalToAllVoices;
-  mapping (uint=>uint) private numberProposalToProVoices;
+  mapping (address=>uint) public addressToProposalNumber;
+  mapping (uint=>uint) public numberProposalToAllVoices;
+  mapping (uint=>uint) public numberProposalToProVoices;
 
   /// @notice If senders user has no proposal create them
   /// @param _proposal The text of proposal
