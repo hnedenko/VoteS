@@ -11,5 +11,5 @@ Update "pro" and all voices counter for proposal with (proposalNumber)
 ### .getUserVoiceContra(uint proposalNumber)
 Update all voices counter for proposal with (proposalNumber)
 
-# Currently fully tested and deployed.
-Contract Address in Rinkeby: 
+# Contract Address in Rinkeby
+ 
