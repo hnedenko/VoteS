@@ -12,4 +12,4 @@ Update "pro" and all voices counter for proposal with (proposalNumber)
 Update all voices counter for proposal with (proposalNumber)
 
 # Contract Address in Rinkeby
-0x00614FCe22980bF3af5c1D23C100301a7c07dE5b
+0x18E19668B9d5EdB22a4f671C01B9087dc82fd7eb
