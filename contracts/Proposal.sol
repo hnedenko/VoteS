@@ -11,18 +11,16 @@ contract Proposal {
   uint public proposalsCounter;
   string[] public proposals;
 
-  mapping (address=>uint) public addressToProposalNumber;
+  mapping (address=>uint[]) public addressToProposalNumbers;
   mapping (uint=>uint) public numberProposalToAllVoices;
   mapping (uint=>uint) public numberProposalToProVoices;
 
   /// @notice If senders user has no proposal create them
   /// @param _proposal The text of proposal
-  /// @dev Now one user cannot create more than one proposal (is it worth changing?)
   function createNewProposal(string memory _proposal) external {
-    require(addressToProposalNumber[msg.sender] == 0);
     proposalsCounter++;
     proposals.push(_proposal);
-    addressToProposalNumber[msg.sender] = proposalsCounter;
+    addressToProposalNumbers[msg.sender].push(proposalsCounter);
     emit NewProposalCreated(msg.sender, proposalsCounter, _proposal);
   }
 
