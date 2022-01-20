@@ -27,6 +27,12 @@ contract("Proposal", (accounts) => {
             const rezult = await this.contractInstance.createNewProposal(proposals[0], {from: alice});
             await expectEvent.inTransaction(rezult.tx, this.contractInstance, "NewProposalCreated");
         })
+        it("Several votes for user created", async () => {
+            await this.contractInstance.createNewProposal(proposals[0], {from: alice});
+            await this.contractInstance.createNewProposal(proposals[1], {from: alice});
+            await this.contractInstance.createNewProposal(proposals[2], {from: alice});
+            expect(await this.contractInstance.proposalsCounter()).to.be.bignumber.equal(new BN(3));
+        })
     })
 
     // Test getUsersVoicePro()
