@@ -6,6 +6,7 @@ pragma solidity >=0.4.22 <0.9.0;
 contract Proposal {
 
   event NewProposalCreated(address indexed user, uint proposalNumber, string proposal);
+  event UserTryVoting(address indexed user, uint proposalNumber, bool answer);
   event UserVoted(address indexed user, uint proposalNumber, bool answer);
   
   uint public proposalsCounter;
@@ -14,8 +15,9 @@ contract Proposal {
   mapping (address=>uint[]) public addressToProposalNumbers;
   mapping (uint=>uint) public numberProposalToAllVoices;
   mapping (uint=>uint) public numberProposalToProVoices;
+  mapping (bytes32=>bool) public voiceHashToVotedFact;
 
-  /// @notice If senders user has no proposal create them
+  /// @notice Ccreate proposal by sender
   /// @param _proposal The text of proposal
   function createNewProposal(string memory _proposal) external {
     proposalsCounter++;
@@ -26,18 +28,28 @@ contract Proposal {
 
   /// @notice Send users voice "pro" if he did not vote for this proposal
   /// @param _proposalNumber Number of proposal, which voting
-  /// @dev Now one user can voting more then once (is it worth changing?)
   function getUsersVoicePro(uint _proposalNumber) external {
+    emit UserTryVoting(msg.sender, _proposalNumber, true);
+
+    bytes32 voiceHash = keccak256(abi.encode(_proposalNumber, msg.sender));
+    require(voiceHashToVotedFact[voiceHash] != true);
+
     numberProposalToAllVoices[_proposalNumber]++;
     numberProposalToProVoices[_proposalNumber]++;
+    voiceHashToVotedFact[voiceHash] = true;
     emit UserVoted(msg.sender, _proposalNumber, true);
   }
 
   /// @notice Send users voice "contra" if he did not vote for this proposal
   /// @param _proposalNumber Number of proposal, which voting
-  /// @dev Now one user can voting more then once (is it worth changing?)
   function getUserVoiceContra(uint _proposalNumber) external {
+    emit UserTryVoting(msg.sender, _proposalNumber, false);
+
+    bytes32 voiceHash = keccak256(abi.encode(_proposalNumber, msg.sender));
+    require(voiceHashToVotedFact[voiceHash] != true);
+
     numberProposalToAllVoices[_proposalNumber]++;
+    voiceHashToVotedFact[voiceHash] = true;
     emit UserVoted(msg.sender, _proposalNumber, false);
   }
 }
