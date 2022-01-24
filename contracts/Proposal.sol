@@ -17,7 +17,7 @@ contract Proposal {
   mapping (uint=>uint) public numberProposalToProVoices;
   mapping (bytes32=>bool) public voiceHashToVotedFact;
 
-  /// @notice Ccreate proposal by sender
+  /// @notice Create proposal by sender
   /// @param _proposal The text of proposal
   function createNewProposal(string memory _proposal) external {
     proposalsCounter++;
@@ -34,8 +34,8 @@ contract Proposal {
     bytes32 voiceHash = keccak256(abi.encode(_proposalNumber, msg.sender));
     require(voiceHashToVotedFact[voiceHash] != true);
 
-    numberProposalToAllVoices[_proposalNumber]++;
-    numberProposalToProVoices[_proposalNumber]++;
+    numberProposalToAllVoices[_proposalNumber] ++;
+    numberProposalToProVoices[_proposalNumber] ++;
     voiceHashToVotedFact[voiceHash] = true;
     emit UserVoted(msg.sender, _proposalNumber, true);
   }

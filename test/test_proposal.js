@@ -53,6 +53,30 @@ contract("Proposal", (accounts) => {
             const rezult = await this.contractInstance.getUsersVoicePro(1, {from: alice});
             await expectEvent.inTransaction(rezult.tx, this.contractInstance, "UserVoted");
         })
+        it("First vote increases 'pro' and 'all' voices counters", async () => {
+            await this.contractInstance.createNewProposal(proposals[0], {from: alice});
+            await this.contractInstance.getUsersVoicePro(new BN(1), {from: alice});
+            expect(await this.contractInstance.numberProposalToProVoices(new BN(1))).to.be.bignumber.equal(new BN(1));
+            expect(await this.contractInstance.numberProposalToAllVoices(new BN(1))).to.be.bignumber.equal(new BN(1));
+        })
+        it("Second votes trying doesn`t increases 'pro' and 'all' voices counters", async () => {
+            await this.contractInstance.createNewProposal(proposals[0], {from: alice});
+            await this.contractInstance.getUsersVoicePro(new BN(1), {from: alice});
+            try {
+                await this.contractInstance.getUsersVoicePro(new BN(1), {from: alice});
+            } catch {}
+            
+            expect(await this.contractInstance.numberProposalToProVoices(new BN(1))).to.be.bignumber.equal(new BN(1));
+            expect(await this.contractInstance.numberProposalToAllVoices(new BN(1))).to.be.bignumber.equal(new BN(1));
+        })
+        it("Second vote for another user increases 'pro' and 'all' voices counters", async () => {
+            await this.contractInstance.createNewProposal(proposals[0], {from: alice});
+            await this.contractInstance.getUsersVoicePro(new BN(1), {from: alice});
+            await this.contractInstance.getUsersVoicePro(new BN(1), {from: bob});
+            
+            expect(await this.contractInstance.numberProposalToProVoices(new BN(1))).to.be.bignumber.equal(new BN(2));
+            expect(await this.contractInstance.numberProposalToAllVoices(new BN(1))).to.be.bignumber.equal(new BN(2));
+        })
     })
 
     // Test getUserVoiceContra()
@@ -72,6 +96,40 @@ contract("Proposal", (accounts) => {
             await this.contractInstance.createNewProposal(proposals[0], {from: alice});
             const rezult = await this.contractInstance.getUserVoiceContra(1, {from: alice});
             await expectEvent.inTransaction(rezult.tx, this.contractInstance, "UserVoted");
+        })
+        it("First vote increases 'all' voices counter", async () => {
+            await this.contractInstance.createNewProposal(proposals[0], {from: alice});
+            await this.contractInstance.getUserVoiceContra(new BN(1), {from: alice});
+            expect(await this.contractInstance.numberProposalToAllVoices(new BN(1))).to.be.bignumber.equal(new BN(1));
+        })
+        it("First vote doesn`t increases 'pro' voices counter", async () => {
+            await this.contractInstance.createNewProposal(proposals[0], {from: alice});
+            await this.contractInstance.getUserVoiceContra(new BN(1), {from: alice});
+            expect(await this.contractInstance.numberProposalToProVoices(new BN(1))).to.be.bignumber.equal(new BN(0));
+        })
+        it("Second votes trying doesn`t increases 'pro' and 'all' voices counter", async () => {
+            await this.contractInstance.createNewProposal(proposals[0], {from: alice});
+            await this.contractInstance.getUserVoiceContra(new BN(1), {from: alice});
+            try {
+                await this.contractInstance.getUserVoiceContra(new BN(1), {from: alice});
+            } catch {}
+            
+            expect(await this.contractInstance.numberProposalToProVoices(new BN(1))).to.be.bignumber.equal(new BN(0));
+            expect(await this.contractInstance.numberProposalToAllVoices(new BN(1))).to.be.bignumber.equal(new BN(1));
+        })
+        it("Second vote for another user increases 'all' voices counter", async () => {
+            await this.contractInstance.createNewProposal(proposals[0], {from: alice});
+            await this.contractInstance.getUserVoiceContra(new BN(1), {from: alice});
+            await this.contractInstance.getUserVoiceContra(new BN(1), {from: bob});
+            
+            expect(await this.contractInstance.numberProposalToAllVoices(new BN(1))).to.be.bignumber.equal(new BN(2));
+        })
+        it("Second vote for another user doesn`t increases 'pro' voices counter", async () => {
+            await this.contractInstance.createNewProposal(proposals[0], {from: alice});
+            await this.contractInstance.getUserVoiceContra(new BN(1), {from: alice});
+            await this.contractInstance.getUserVoiceContra(new BN(1), {from: bob});
+            
+            expect(await this.contractInstance.numberProposalToProVoices(new BN(1))).to.be.bignumber.equal(new BN(0));
         })
     })
 })
